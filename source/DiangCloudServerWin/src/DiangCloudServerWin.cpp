@@ -7,6 +7,8 @@
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS 1
 
+using namespace DC_BASE;
+
 namespace
 {
 	bool WSA_INIT_SUCCESSED = false;
@@ -47,7 +49,7 @@ namespace TEMP_SERVER
 
 		sockaddr_in servAddr;
 		servAddr.sin_addr.s_addr = ADDR_ANY;
-		servAddr.sin_port = htons(TEMP_SERVER_PORT);
+		servAddr.sin_port = htons(DEFAULT_SERVER_PORT);
 		servAddr.sin_family = AF_INET;
 
 		if (0 != bind(servSock, (const sockaddr *)(&servAddr), sizeof(servAddr)))
@@ -91,32 +93,6 @@ int main(int args, char **argv)
 #ifdef SERVER
 	TEMP_SERVER::serverListening(); //fake server
 #endif // SERVER
-
-
-#ifdef CLIENT
-	SOCKET clientSock;
-	if (INVALID_SOCKET == (clientSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
-	{
-		ASSERT("socket failed!");
-		return 0;
-	}
-
-	sockaddr_in servAddr;
-	servAddr.sin_addr.s_addr = inet_addr(TEMP_SERVER_ADRESS);
-	servAddr.sin_port = htons(TEMP_SERVER_PORT);
-	servAddr.sin_family = AF_INET;
-
-	if (0 != connect(clientSock, (const sockaddr *)(&servAddr), sizeof(servAddr)))
-	{
-		ASSERT("connect failed!");
-		return 0;
-	}
-
-	char buff[1024] = "hello diang";
-	send(clientSock, buff, sizeof(buff), 0);
-
-	closesocket(clientSock);
-#endif // CLIENT
 
 	WSA_UNINIT();
 	return 0;
